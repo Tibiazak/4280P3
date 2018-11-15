@@ -10,6 +10,7 @@
 void expr();
 void stat();
 void vars();
+void block();
 
 token tk;
 FILE * fp;

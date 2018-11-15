@@ -541,7 +541,7 @@ void parser(FILE * fptr)
     }
     else
     {
-        printf("ERROR, no EOF but end of parse\n");
+        printf("ERROR, program continues after final \"end\"\n");
         fclose(fp);
         exit(1);
     }

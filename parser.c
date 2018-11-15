@@ -523,7 +523,7 @@ void program()
     }
 }
 
-token parser()
+void parser()
 {
     tk = scan(fp);
     program();

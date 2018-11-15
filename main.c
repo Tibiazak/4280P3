@@ -8,6 +8,7 @@
 #include <string.h>
 #include "token.h"
 #include "scanner.h"
+#include "parser.h"
 #include <stdbool.h>
 
 int main(int argc, char * argv[])
@@ -55,21 +56,24 @@ int main(int argc, char * argv[])
         exit(1);
     }
 
-    token newtoken;
-    bool done = false;
-    while(!done)
-    {
-        newtoken = scan(fp);
-        if(newtoken.tokenID == eofTk)
-        {
-            printf("%s \n", tokenArr[newtoken.tokenID], newtoken.tokenInstance);
-            done = true;
-        }
-        else
-        {
-            printf("%s %s\n", tokenArr[newtoken.tokenID], newtoken.tokenInstance);
-        }
-    }
+//    token newtoken;
+//    bool done = false;
+//    while(!done)
+//    {
+//        newtoken = scan(fp);
+//        if(newtoken.tokenID == eofTk)
+//        {
+//            printf("%s %s\n", tokenArr[newtoken.tokenID], newtoken.tokenInstance);
+//            done = true;
+//        }
+//        else
+//        {
+//            printf("%s %s\n", tokenArr[newtoken.tokenID], newtoken.tokenInstance);
+//        }
+//    }
+
+    parser(fp);
+
     // Close the file unless the file is stdin
     if (fp != stdin)
     {

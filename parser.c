@@ -2,6 +2,8 @@
 // Created by fof_z on 11/14/2018.
 //
 
+#include <stdlib.h>
+#include <stdio.h>
 #include "token.h"
 #include "scanner.h"
 
@@ -173,7 +175,7 @@ void ifprod()
 
 void out()
 {
-    if(tk.tokenID == printTkTk)
+    if(tk.tokenID == printTk)
     {
         tk = scan(fp);
         if(tk.tokenID == openparenTk)

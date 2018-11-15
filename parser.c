@@ -7,6 +7,10 @@
 #include "token.h"
 #include "scanner.h"
 
+void expr();
+void stat();
+void vars();
+
 token tk;
 FILE * fp;
 

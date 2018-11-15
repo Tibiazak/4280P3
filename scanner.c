@@ -43,7 +43,7 @@ token scan(FILE * fp)
     {
         for(i = 0; i < 8; i++)
         {
-            if(isalpha(tok[i]))
+            if(isalpha(tok[i]) && (i < strlen(tok)))
             {
                 printf("Error, invalid integer!\n");
                 fclose(fp);

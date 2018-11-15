@@ -310,6 +310,12 @@ void stat()
         assign();
         return;
     }
+    else if(tk.tokenID == beginTk)
+    {
+        //block production
+        block();
+        return;
+    }
     else
     {
         //error

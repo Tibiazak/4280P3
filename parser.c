@@ -12,7 +12,7 @@ void stat();
 void vars();
 
 token tk;
-FILE * fp
+FILE * fp;
 
 void RO()
 {

@@ -12,7 +12,6 @@ void stat();
 void vars();
 
 token tk;
-FILE * fp;
 
 void RO()
 {
@@ -523,7 +522,7 @@ void program()
     }
 }
 
-void parser()
+void parser(FILE * fp)
 {
     tk = scan(fp);
     program();

@@ -12,6 +12,7 @@ void stat();
 void vars();
 
 token tk;
+FILE * fp
 
 void RO()
 {
@@ -522,8 +523,9 @@ void program()
     }
 }
 
-void parser(FILE * fp)
+void parser(FILE * fptr)
 {
+    fp = fptr;
     tk = scan(fp);
     program();
     if(tk.tokenID == eofTk)

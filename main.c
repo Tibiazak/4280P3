@@ -1,6 +1,8 @@
 // Joshua Bearden
-// CS4280 Project 1
-// 10/27/18
+// CS4280 Project 2
+// Main just determines where the input is coming from,
+// validates the filename, opens the file,
+// and then calls the parser, which calls the scanner.
 
 
 #include <stdio.h>
@@ -15,14 +17,14 @@ int main(int argc, char * argv[])
 {
     FILE * fp;
     char file[30];
-    char * filename;
+//    char * filename;
 
     // Check command line arguments
     if (argc == 1)
     {
         printf("No file given, read from stdin.\n");
         fp = stdin;
-        filename = "out";
+//        filename = "out";
     }
     else if (argc == 2) // If there is a file listed
     {
@@ -30,7 +32,7 @@ int main(int argc, char * argv[])
         strcpy(file, argv[1]);
         strcat(file, ".fs18");
         fp = fopen(file, "r");
-        filename = argv[1];
+//        filename = argv[1];
     }
     else // too many arguments
     {

@@ -1,5 +1,10 @@
 //
-// Created by fof_z on 11/14/2018.
+// Joshua Bearden
+// CS4280
+// P2 Parser
+// This file takes in the next token (from the scanner) and
+// determines if the tokens are coming in a valid order.
+// To-do: Generate parse tree
 //
 
 #include <stdlib.h>
@@ -7,6 +12,8 @@
 #include "token.h"
 #include "scanner.h"
 
+
+// Declaring some functions at the top
 void expr();
 void stat();
 void vars();
@@ -15,6 +22,8 @@ void block();
 token tk;
 FILE * fp;
 
+// Each of the following functions is named after a nonterminal from the BNF, it follows each production
+// As written in the BNF.
 void RO()
 {
     if(tk.tokenID == lessTk)

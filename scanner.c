@@ -1,5 +1,9 @@
 //
-// Created by fof_z on 10/28/2018.
+// Joshua Bearden
+// CS4280
+// P2 Scanner
+// This file scans a file returning tokens based on the file read
+// Line numbers are currently not counted (to-do).
 //
 
 #include "token.h"
@@ -8,16 +12,19 @@
 #include <string.h>
 #include <ctype.h>
 
+// Array of tokens in the same order as the enumerated type for simple output
 char * tokenArr[] = {"begin", "end", "iter", "void", "var", "return", "read", "print",
                      "program", "cond", "then", "let", "=", ">", "<", ":", "+", "-", "*",
                      "/", "%", ".", "(", ")", ",", "{", "}", ";", "[", "]", "identifier", "integer", "EOF"};
 
+// Main function
 token scan(FILE * fp)
 {
     char tok[8];
     token newtoken;
     int i;
 
+    // get the next whitespace separated token from the file, finish if it is EOF
     if(fscanf(fp, "%s", tok) == EOF)
     {
         newtoken.tokenID = eofTk;
@@ -27,6 +34,7 @@ token scan(FILE * fp)
 
     newtoken.line = 0;
     printf("Token is %s\n", tok);
+    // Check what token it is, update the token info accordingly and return
     for (i = 0; i < 30; i++)
     {
         newtoken.tokenID = i;
@@ -39,6 +47,7 @@ token scan(FILE * fp)
         }
     }
 
+    // Checks for integer and identifier tokens
     if(isdigit(tok[0]))
     {
         for(i = 0; i < 8; i++)

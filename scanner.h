@@ -1,5 +1,7 @@
 //
-// Created by fof_z on 10/28/2018.
+// Joshua Bearden
+// CS4280
+// Header file for Scanner
 //
 
 #ifndef SCANNER_H

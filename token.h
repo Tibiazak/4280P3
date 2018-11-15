@@ -1,5 +1,9 @@
 //
-// Created by fof_z on 10/27/2018.
+// Joshua Bearden
+// CS4280
+// Token file: contains the definition for the token type,
+// the enumeration type "tokens", and the extern declaration
+// of the tokenArr array.
 //
 
 #ifndef TOKEN_H

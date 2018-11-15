@@ -1,5 +1,7 @@
 //
-// Created by fof_z on 11/14/2018.
+// Joshua Bearden
+// CS4280
+// Header for Parser
 //
 
 #ifndef PARSER_H

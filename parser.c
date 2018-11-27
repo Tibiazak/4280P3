@@ -9,33 +9,36 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "token.h"
 #include "scanner.h"
-
+#include "parsenode.h"
 
 // Declaring some functions at the top
-void expr();
-void stat();
-void vars();
-void block();
+parseNode * expr();
+parseNode * stat();
+parseNode * vars();
+parseNode * block();
 
 token tk;
 FILE * fp;
 
 // Each of the following functions is named after a nonterminal from the BNF, it follows each production
 // As written in the BNF.
-void RO()
+void RO(parseNode * n)
 {
     if(tk.tokenID == lessTk)
     {
         tk = scan(fp);
         if(tk.tokenID == equalTk)
         {
+            strcpy(n->op, "< =");
             tk = scan(fp);
             return;
         }
         else
         {
+            strcpy(n->op, "<");
             return;
         }
     }
@@ -44,11 +47,13 @@ void RO()
         tk = scan(fp);
         if(tk.tokenID == equalTk)
         {
+            strcpy(n->op, "> =");
             tk = scan(fp);
             return;
         }
         else
         {
+            strcpy(n->op, ">");
             return;
         }
     }
@@ -57,11 +62,13 @@ void RO()
         tk = scan(fp);
         if(tk.tokenID == equalTk)
         {
+            strcpy(n->op, "= =");
             tk = scan(fp);
             return;
         }
         else
         {
+            strcpy(n->op, "=");
             return;
         }
     }
@@ -73,19 +80,22 @@ void RO()
     }
 }
 
-void assign()
+parseNode * assign()
 {
+    parseNode * n;
+    n->nonTerm = "assign";
     if(tk.tokenID == identifierTk)
     {
+        strcpy(n->ident, tk.tokenInstance);
         tk = scan(fp);
         if(tk.tokenID == equalTk)
         {
             tk = scan(fp);
-            expr();
+            n->midSub = expr();
             if(tk.tokenID == colonTk)
             {
                 tk = scan(fp);
-                return;
+                return n;
             }
             else
             {
@@ -109,22 +119,24 @@ void assign()
     }
 }
 
-void loop()
+parseNode * loop()
 {
+    parseNode * n;
+    n->nonTerm = "loop";
     if(tk.tokenID == iterTk)
     {
         tk = scan(fp);
         if(tk.tokenID == openparenTk)
         {
             tk = scan(fp);
-            expr();
-            RO();
-            expr();
+            n->leftSub = expr();
+            RO(n);
+            n->midSub = expr();
             if(tk.tokenID == closeparenTk)
             {
                 tk = scan(fp);
-                stat();
-                return;
+                n->rightSub = stat();
+                return n;
             }
             else
             {
@@ -148,22 +160,24 @@ void loop()
     }
 }
 
-void ifprod()
+parseNode * ifprod()
 {
+    parseNode * n;
+    n->nonTerm = "if";
     if(tk.tokenID == condTk)
     {
         tk = scan(fp);
         if(tk.tokenID == openparenTk)
         {
             tk = scan(fp);
-            expr();
-            RO();
-            expr();
+            n->leftSub = expr();
+            RO(n);
+            n->midSub = expr();
             if(tk.tokenID == closeparenTk)
             {
                 tk = scan(fp);
-                stat();
-                return;
+                n->rightSub = stat();
+                return n;
             }
             else
             {
@@ -187,22 +201,24 @@ void ifprod()
     }
 }
 
-void out()
+parseNode * out()
 {
+    parseNode * n;
+    n->nonTerm = "out";
     if(tk.tokenID == printTk)
     {
         tk = scan(fp);
         if(tk.tokenID == openparenTk)
         {
             tk = scan(fp);
-            expr();
+            n->midSub = expr();
             if(tk.tokenID == closeparenTk)
             {
                 tk = scan(fp);
                 if(tk.tokenID == colonTk)
                 {
                     tk = scan(fp);
-                    return;
+                    return n;
                 }
                 else
                 {
@@ -233,8 +249,10 @@ void out()
     }
 }
 
-void in()
+parseNode * in()
 {
+    parseNode * n;
+    n->nonTerm = "in";
     if(tk.tokenID == readTk)
     {
         tk = scan(fp);
@@ -243,6 +261,7 @@ void in()
             tk = scan(fp);
             if(tk.tokenID == identifierTk)
             {
+                strcpy(n->ident, tk.tokenInstance);
                 tk = scan(fp);
                 if(tk.tokenID == closeparenTk)
                 {
@@ -250,7 +269,7 @@ void in()
                     if(tk.tokenID == colonTk)
                     {
                         tk = scan(fp);
-                        return;
+                        return n;
                     }
                     else
                     {
@@ -288,43 +307,45 @@ void in()
     }
 }
 
-void stat()
+parseNode * stat()
 {
+    parseNode * n;
+    n->nonTerm = "stat";
     if(tk.tokenID == readTk)
     {
         // in production
-        in();
-        return;
+        n->midSub = in();
+        return n;
     }
     else if(tk.tokenID == printTk)
     {
         // out production
-        out();
-        return;
+        n->midSub = out();
+        return n;
     }
     else if(tk.tokenID == condTk)
     {
         //if production
-        ifprod();
-        return;
+        n->midSub = ifprod();
+        return n;
     }
     else if(tk.tokenID == iterTk)
     {
         //loop production
-        loop();
-        return;
+        n->midSub = loop();
+        return n;
     }
     else if(tk.tokenID == identifierTk)
     {
         //assign production
-        assign();
-        return;
+        n->midSub = assign();
+        return n;
     }
     else if(tk.tokenID == beginTk)
     {
         //block production
-        block();
-        return;
+        n->midSub = block();
+        return n;
     }
     else
     {
@@ -335,39 +356,45 @@ void stat()
     }
 }
 
-void mstat()
+parseNode * mstat()
 {
+    parseNode * n;
+    n->nonTerm = "mstat";
     if(tk.tokenID == endTk)
     {
         //empty production, return
-        return;
+        return n;
     }
     else
     {
-        stat();
-        mstat();
-        return;
+        n->leftSub = stat();
+        n->rightSub = mstat();
+        return n;
     }
 }
 
-void stats()
+parseNode * stats()
 {
-    stat();
-    mstat();
-    return;
+    parseNode * n;
+    n->nonTerm = "stats";
+    n->leftSub = stat();
+    n->rightSub = mstat();
+    return n;
 }
 
-void block()
+parseNode * block()
 {
+    parseNode * n;
+    n->nonTerm = "block";
     if(tk.tokenID == beginTk)
     {
         tk = scan(fp);
-        vars();
-        stats();
+        n->leftSub = vars();
+        n->rightSub = stats();
         if(tk.tokenID == endTk)
         {
             tk = scan(fp);
-            return;
+            return n;
         }
         else
         {
@@ -384,16 +411,18 @@ void block()
     }
 }
 
-void R()
+parseNode * R()
 {
+    parseNode * n;
+    n->nonTerm = "R";
     if(tk.tokenID == openparenTk)
     {
         tk = scan(fp);
-        expr();
+        n->midSub = expr();
         if(tk.tokenID == closeparenTk)
         {
             tk = scan(fp);
-            return;
+            return n;
         }
         else
         {
@@ -404,13 +433,15 @@ void R()
     }
     else if(tk.tokenID == identifierTk)
     {
+        strcpy(n->ident, tk.tokenInstance);
         tk = scan(fp);
-        return;
+        return n;
     }
     else if(tk.tokenID == integerTk)
     {
+        strcpy(n->integr, tk.tokenInstance);
         tk = scan(fp);
-        return;
+        return n;
     }
     else
     {
@@ -420,79 +451,94 @@ void R()
     }
 }
 
-void M()
+parseNode * M()
 {
+    parseNode * n;
+    n->nonTerm = "M";
     if(tk.tokenID == minusTk)
     {
+        strcpy(n->op, "-");
         tk = scan(fp);
-        M();
-        return;
+        n->midSub = M();
+        return n;
     }
     else
     {
-        R();
-        return;
+        n->midSub = R();
+        return n;
     }
 }
 
-void A()
+parseNode * A()
 {
-    M();
+    parseNode * n;
+    n->nonTerm = "A";
+    n->leftSub = M();
     if(tk.tokenID == plusTk)
     {
+        n->op = "+";
         tk = scan(fp);
-        A();
-        return;
+        n->rightSub = A();
+        return n;
     }
     else if(tk.tokenID == minusTk)
     {
+        n->op = "-";
         tk = scan(fp);
-        A();
-        return;
+        n->rightSub = A();
+        return n;
     }
     else
     {
-        return;
+        return n;
     }
 }
 
-void expr()
+parseNode * expr()
 {
-    A();
+    parseNode * n;
+    n->nonTerm = "expr";
+    n->leftSub = A();
     if(tk.tokenID == slashTk)
     {
+        n->op = "/";
         tk = scan(fp);
-        expr();
-        return;
+        n->rightSub = expr();
+        return n;
     }
     else if(tk.tokenID == starTk)
     {
+        n->op = "*";
         tk = scan(fp);
-        expr();
-        return;
+        n->rightSub = expr();
+        return n;
     }
     else
     {
-        return;
+        return n;
     }
 }
 
-void vars()
+parseNode * vars()
 {
+    parseNode * n;
+    n->nonTerm = "vars";
     if(tk.tokenID == letTk)
     {
         tk = scan(fp);
         if(tk.tokenID == identifierTk)
         {
+            strcpy(n->ident, tk.tokenInstance);
             tk = scan(fp);
             if(tk.tokenID == equalTk)
             {
                 tk = scan(fp);
                 if(tk.tokenID == integerTk)
                 {
+                    strcpy(n->integr, tk.tokenInstance);
                     tk = scan(fp);
-                    vars();
-                    return;
+                    n->midSub = vars();
+                    return n;
                 }
                 else
                 {
@@ -518,18 +564,20 @@ void vars()
     else
     {
         // empty production, return
-        return;
+        return n;
     }
 }
 
-void program()
+parseNode * program()
 {
+    parseNode * n;
+    n->nonTerm = "program";
     if(tk.tokenID == voidTk)
     {
         tk = scan(fp);
-        vars();
-        block();
-        return;
+        n->leftSub = vars();
+        n->rightSub = block();
+        return n;
     }
     else
     {
@@ -539,11 +587,12 @@ void program()
     }
 }
 
-void parser(FILE * fptr)
+parseNode * parser(FILE * fptr)
 {
     fp = fptr;
     tk = scan(fp);
-    program();
+    parseNode * n;
+    n = program();
     if(tk.tokenID == eofTk)
     {
         printf("Parse good\n");
@@ -554,5 +603,5 @@ void parser(FILE * fptr)
         fclose(fp);
         exit(1);
     }
-    return;
+    return n;
 }

@@ -11,6 +11,7 @@
 #include "token.h"
 #include "scanner.h"
 #include "parser.h"
+#include "parsenode.h"
 #include <stdbool.h>
 
 int main(int argc, char * argv[])

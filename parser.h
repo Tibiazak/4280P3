@@ -6,5 +6,9 @@
 
 #ifndef PARSER_H
 #define PARSER_H
-void parser(FILE *);
+
+#include "parsenode.h"
+
+parseNode * parser(FILE *);
+
 #endif //PARSER_H

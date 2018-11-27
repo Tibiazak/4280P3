@@ -476,14 +476,14 @@ parseNode * A()
     n->leftSub = M();
     if(tk.tokenID == plusTk)
     {
-        n->op = "+";
+        strcpy(n->op, "+");
         tk = scan(fp);
         n->rightSub = A();
         return n;
     }
     else if(tk.tokenID == minusTk)
     {
-        n->op = "-";
+        strcpy(n->op, "-");
         tk = scan(fp);
         n->rightSub = A();
         return n;
@@ -501,14 +501,14 @@ parseNode * expr()
     n->leftSub = A();
     if(tk.tokenID == slashTk)
     {
-        n->op = "/";
+        strcpy(n->op, "/");
         tk = scan(fp);
         n->rightSub = expr();
         return n;
     }
     else if(tk.tokenID == starTk)
     {
-        n->op = "*";
+        strcpy(n->op, "*");
         tk = scan(fp);
         n->rightSub = expr();
         return n;

@@ -75,7 +75,8 @@ int main(int argc, char * argv[])
 //        }
 //    }
 
-    parser(fp);
+    parseNode * tree = parser(fp);
+    freeTree(tree);
 
     // Close the file unless the file is stdin
     if (fp != stdin)

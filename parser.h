@@ -9,6 +9,7 @@
 
 #include "parsenode.h"
 
+void freeTree(parseNode *);
 parseNode * parser(FILE *);
 
 #endif //PARSER_H

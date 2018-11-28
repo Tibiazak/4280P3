@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #include "token.h"
 #include "scanner.h"
 #include "parsenode.h"
@@ -22,6 +23,41 @@ parseNode * block();
 
 token tk;
 FILE * fp;
+parseNode * treeBase;
+char errorMsg[100];
+bool error = false;
+
+
+parseNode * init_node()
+{
+    parseNode * newNode = (parseNode *)malloc(sizeof(parseNode));
+    newNode->leftSub = NULL;
+    newNode->rightSub = NULL;
+    newNode->midSub = NULL;
+    return newNode;
+}
+
+
+void freeTree(parseNode * treePtr)
+{
+    if(treePtr->leftSub)
+    {
+        freeTree(treePtr->leftSub);
+    }
+    if(treePtr->rightSub)
+    {
+        freeTree(treePtr->rightSub);
+    }
+    if(treePtr->midSub)
+    {
+        freeTree(treePtr->midSub);
+    }
+    free(treePtr->leftSub);
+    free(treePtr->rightSub);
+    free(treePtr->midSub);
+    return;
+}
+
 
 // Each of the following functions is named after a nonterminal from the BNF, it follows each production
 // As written in the BNF.
@@ -74,15 +110,17 @@ void RO(parseNode * n)
     }
     else
     {
-        printf("Error! Expected <, or >, or =, received %s\n", tokenArr[tk.tokenID]);
-        fclose(fp);
-        exit(1);
+        strcpy(errorMsg, "Error! Expected <, or >, or =, received ");
+        strcat(errorMsg, tokenArr[tk.tokenID]);
+        error = true;
+        return;
     }
 }
 
 parseNode * assign()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "assign";
     if(tk.tokenID == identifierTk)
     {
@@ -92,6 +130,11 @@ parseNode * assign()
         {
             tk = scan(fp);
             n->midSub = expr();
+            if(error)
+            {
+                return n;
+            }
+
             if(tk.tokenID == colonTk)
             {
                 tk = scan(fp);
@@ -99,29 +142,33 @@ parseNode * assign()
             }
             else
             {
-                printf("Error! Expected colon, received %s\n", tokenArr[tk.tokenID]);
-                fclose(fp);
-                exit(1);
+                strcpy(errorMsg, "Error! Expected colontk, received ");
+                strcat(errorMsg, tokenArr[tk.tokenID]);
+                error = true;
+                return n;
             }
         }
         else
         {
-            printf("Error! Expected equaltk, received %s\n", tokenArr[tk.tokenID]);
-            fclose(fp);
-            exit(1);
+            strcpy(errorMsg, "Error! Expected equaltk, received ");
+            strcat(errorMsg, tokenArr[tk.tokenID]);
+            error = true;
+            return n;
         }
     }
     else
     {
-        printf("Error! Expected identifier, received %s\n", tokenArr[tk.tokenID]);
-        fclose(fp);
-        exit(1);
+        strcpy(errorMsg, "Error! Expected identifier, received ");
+        strcat(errorMsg, tokenArr[tk.tokenID]);
+        error = true;
+        return n;
     }
 }
 
 parseNode * loop()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "loop";
     if(tk.tokenID == iterTk)
     {
@@ -130,8 +177,23 @@ parseNode * loop()
         {
             tk = scan(fp);
             n->leftSub = expr();
+            if(error)
+            {
+                return n;
+            }
+
             RO(n);
+            if(error)
+            {
+                return n;
+            }
+
             n->midSub = expr();
+            if(error)
+            {
+                return n;
+            }
+
             if(tk.tokenID == closeparenTk)
             {
                 tk = scan(fp);
@@ -140,29 +202,33 @@ parseNode * loop()
             }
             else
             {
-                printf("Error! Expected closeparentk, received %s\n", tokenArr[tk.tokenID]);
-                fclose(fp);
-                exit(1);
+                strcpy(errorMsg, "Error! Expected closeparentk, received ");
+                strcat(errorMsg, tokenArr[tk.tokenID]);
+                error = true;
+                return n;
             }
         }
         else
         {
-            printf("Error! Expected openparentk, received %s\n", tokenArr[tk.tokenID]);
-            fclose(fp);
-            exit(1);
+            strcpy(errorMsg, "Error! Expected openparentk, received ");
+            strcat(errorMsg, tokenArr[tk.tokenID]);
+            error = true;
+            return n;
         }
     }
     else
     {
-        printf("Error! Expected itertk, received %s\n", tokenArr[tk.tokenID]);
-        fclose(fp);
-        exit(1);
+        strcpy(errorMsg, "Error! Expected itertk, received ");
+        strcat(errorMsg, tokenArr[tk.tokenID]);
+        error = true;
+        return n;
     }
 }
 
 parseNode * ifprod()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "if";
     if(tk.tokenID == condTk)
     {
@@ -171,8 +237,23 @@ parseNode * ifprod()
         {
             tk = scan(fp);
             n->leftSub = expr();
+            if(error)
+            {
+                return n;
+            }
+
             RO(n);
+            if(error)
+            {
+                return n;
+            }
+
             n->midSub = expr();
+            if(error)
+            {
+                return n;
+            }
+
             if(tk.tokenID == closeparenTk)
             {
                 tk = scan(fp);
@@ -181,29 +262,33 @@ parseNode * ifprod()
             }
             else
             {
-                printf("Error! Expected closeparentk, received %s\n", tokenArr[tk.tokenID]);
-                fclose(fp);
-                exit(1);
+                strcpy(errorMsg, "Error! Expected closeparentk, received ");
+                strcat(errorMsg, tokenArr[tk.tokenID]);
+                error = true;
+                return n;
             }
         }
         else
         {
-            printf("Error! Expected openparentk, received %s\n", tokenArr[tk.tokenID]);
-            fclose(fp);
-            exit(1);
+            strcpy(errorMsg, "Error! Expected openparentk, received ");
+            strcat(errorMsg, tokenArr[tk.tokenID]);
+            error = true;
+            return n;
         }
     }
     else
     {
-        printf("Error! Expected condtk, received %s\n", tokenArr[tk.tokenID]);
-        fclose(fp);
-        exit(1);
+        strcpy(errorMsg, "Error! Expected condtk, received ");
+        strcat(errorMsg, tokenArr[tk.tokenID]);
+        error = true;
+        return n;
     }
 }
 
 parseNode * out()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "out";
     if(tk.tokenID == printTk)
     {
@@ -212,6 +297,10 @@ parseNode * out()
         {
             tk = scan(fp);
             n->midSub = expr();
+            if(error)
+            {
+                return n;
+            }
             if(tk.tokenID == closeparenTk)
             {
                 tk = scan(fp);
@@ -222,36 +311,41 @@ parseNode * out()
                 }
                 else
                 {
-                    printf("Error! Expected colon, received %s\n", tokenArr[tk.tokenID]);
-                    fclose(fp);
-                    exit(1);
+                    strcpy(errorMsg, "Error! Expected colontk, received ");
+                    strcat(errorMsg, tokenArr[tk.tokenID]);
+                    error = true;
+                    return n;
                 }
             }
             else
             {
-                printf("Error! Expected closeparentk, received %s\n", tokenArr[tk.tokenID]);
-                fclose(fp);
-                exit(1);
+                strcpy(errorMsg, "Error! Expected closeparentk, received ");
+                strcat(errorMsg, tokenArr[tk.tokenID]);
+                error = true;
+                return n;
             }
         }
         else
         {
-            printf("Error! Expected openparentk, received %s\n", tokenArr[tk.tokenID]);
-            fclose(fp);
-            exit(1);
+            strcpy(errorMsg, "Error! Expected openparentk, received ");
+            strcat(errorMsg, tokenArr[tk.tokenID]);
+            error = true;
+            return n;
         }
     }
     else
     {
-        printf("Error! Expected printtk, received %s\n", tokenArr[tk.tokenID]);
-        fclose(fp);
-        exit(1);
+        strcpy(errorMsg, "Error! Expected printtk, received ");
+        strcat(errorMsg, tokenArr[tk.tokenID]);
+        error = true;
+        return n;
     }
 }
 
 parseNode * in()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "in";
     if(tk.tokenID == readTk)
     {
@@ -273,43 +367,49 @@ parseNode * in()
                     }
                     else
                     {
-                        printf("Error! Expected colon, received %s\n", tokenArr[tk.tokenID]);
-                        fclose(fp);
-                        exit(1);
+                        strcpy(errorMsg, "Error! Expected colontk, received ");
+                        strcat(errorMsg, tokenArr[tk.tokenID]);
+                        error = true;
+                        return n;
                     }
                 }
                 else
                 {
-                    printf("Error! Expected closeparentk, received %s\n", tokenArr[tk.tokenID]);
-                    fclose(fp);
-                    exit(1);
+                    strcpy(errorMsg, "Error! Expected closeparentk, received ");
+                    strcat(errorMsg, tokenArr[tk.tokenID]);
+                    error = true;
+                    return n;
                 }
             }
             else
             {
-                printf("Error! Expected identifier, received %s\n", tokenArr[tk.tokenID]);
-                fclose(fp);
-                exit(1);
+                strcpy(errorMsg, "Error! Expected identifier, received ");
+                strcat(errorMsg, tokenArr[tk.tokenID]);
+                error = true;
+                return n;
             }
         }
         else
         {
-            printf("Error! Expected openparentk, received %s\n", tokenArr[tk.tokenID]);
-            fclose(fp);
-            exit(1);
+            strcpy(errorMsg, "Error! Expected openparentk, received ");
+            strcat(errorMsg, tokenArr[tk.tokenID]);
+            error = true;
+            return n;
         }
     }
     else
     {
-        printf("Error! Expected readtk, received %s\n", tokenArr[tk.tokenID]);
-        fclose(fp);
-        exit(1);
+        strcpy(errorMsg, "Error! Expected readtk, received ");
+        strcat(errorMsg, tokenArr[tk.tokenID]);
+        error = true;
+        return n;
     }
 }
 
 parseNode * stat()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "stat";
     if(tk.tokenID == readTk)
     {
@@ -350,15 +450,17 @@ parseNode * stat()
     else
     {
         //error
-        printf("Error! Expected read/print/cond/iter/identifier, received %s\n", tokenArr[tk.tokenID]);
-        fclose(fp);
-        exit(1);
+        strcpy(errorMsg, "Error! Expected read/print/cond/iter/identifier, received ");
+        strcat(errorMsg, tokenArr[tk.tokenID]);
+        error = true;
+        return n;
     }
 }
 
 parseNode * mstat()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "mstat";
     if(tk.tokenID == endTk)
     {
@@ -368,6 +470,10 @@ parseNode * mstat()
     else
     {
         n->leftSub = stat();
+        if(error)
+        {
+            return n;
+        }
         n->rightSub = mstat();
         return n;
     }
@@ -376,8 +482,13 @@ parseNode * mstat()
 parseNode * stats()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "stats";
     n->leftSub = stat();
+    if(error)
+    {
+        return n;
+    }
     n->rightSub = mstat();
     return n;
 }
@@ -385,12 +496,21 @@ parseNode * stats()
 parseNode * block()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "block";
     if(tk.tokenID == beginTk)
     {
         tk = scan(fp);
         n->leftSub = vars();
+        if(error)
+        {
+            return n;
+        }
         n->rightSub = stats();
+        if(error)
+        {
+            return n;
+        }
         if(tk.tokenID == endTk)
         {
             tk = scan(fp);
@@ -398,27 +518,34 @@ parseNode * block()
         }
         else
         {
-            printf("Error! Expected endtk, received %s\n", tokenArr[tk.tokenID]);
-            fclose(fp);
-            exit(1);
+            strcpy(errorMsg, "Error! Expected endtk, received ");
+            strcat(errorMsg, tokenArr[tk.tokenID]);
+            error = true;
+            return n;
         }
     }
     else
     {
-        printf("Error! Expected begintk, received %s\n", tokenArr[tk.tokenID]);
-        fclose(fp);
-        exit(1);
+        strcpy(errorMsg, "Error! Expected begintk, received ");
+        strcat(errorMsg, tokenArr[tk.tokenID]);
+        error = true;
+        return n;
     }
 }
 
 parseNode * R()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "R";
     if(tk.tokenID == openparenTk)
     {
         tk = scan(fp);
         n->midSub = expr();
+        if(error)
+        {
+            return n;
+        }
         if(tk.tokenID == closeparenTk)
         {
             tk = scan(fp);
@@ -426,9 +553,10 @@ parseNode * R()
         }
         else
         {
-            printf("Error! Expected closeparentk, received %s\n", tokenArr[tk.tokenID]);
-            fclose(fp);
-            exit(1);
+            strcpy(errorMsg, "Error! Expected closeparentk, received ");
+            strcat(errorMsg, tokenArr[tk.tokenID]);
+            error = true;
+            return n;
         }
     }
     else if(tk.tokenID == identifierTk)
@@ -445,15 +573,17 @@ parseNode * R()
     }
     else
     {
-        printf("Error! Expected integer or identifier or openparentk, received %s\n", tokenArr[tk.tokenID]);
-        fclose(fp);
-        exit(1);
+        strcpy(errorMsg, "Error! Expected integer or identifier or openparentk, received ");
+        strcat(errorMsg, tokenArr[tk.tokenID]);
+        error = true;
+        return n;
     }
 }
 
 parseNode * M()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "M";
     if(tk.tokenID == minusTk)
     {
@@ -472,8 +602,13 @@ parseNode * M()
 parseNode * A()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "A";
     n->leftSub = M();
+    if(error)
+    {
+        return n;
+    }
     if(tk.tokenID == plusTk)
     {
         strcpy(n->op, "+");
@@ -497,8 +632,13 @@ parseNode * A()
 parseNode * expr()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "expr";
     n->leftSub = A();
+    if(error)
+    {
+        return n;
+    }
     if(tk.tokenID == slashTk)
     {
         strcpy(n->op, "/");
@@ -522,6 +662,7 @@ parseNode * expr()
 parseNode * vars()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "vars";
     if(tk.tokenID == letTk)
     {
@@ -542,23 +683,26 @@ parseNode * vars()
                 }
                 else
                 {
-                    printf("Error! Expected integer, received %s\n", tokenArr[tk.tokenID]);
-                    fclose(fp);
-                    exit(1);
+                    strcpy(errorMsg, "Error! Expected integer, received ");
+                    strcat(errorMsg, tokenArr[tk.tokenID]);
+                    error = true;
+                    return n;
                 }
             }
             else
             {
-                printf("Error! Expected equaltk, received %s\n", tokenArr[tk.tokenID]);
-                fclose(fp);
-                exit(1);
+                strcpy(errorMsg, "Error! Expected equaltk, received ");
+                strcat(errorMsg, tokenArr[tk.tokenID]);
+                error = true;
+                return n;
             }
         }
         else
         {
-            printf("Error! Expected identifier, received %s\n", tokenArr[tk.tokenID]);
-            fclose(fp);
-            exit(1);
+            strcpy(errorMsg, "Error! Expected identifier, received ");
+            strcat(errorMsg, tokenArr[tk.tokenID]);
+            error = true;
+            return n;
         }
     }
     else
@@ -571,17 +715,27 @@ parseNode * vars()
 parseNode * program()
 {
     parseNode * n;
+    n = init_node();
     n->nonTerm = "program";
     if(tk.tokenID == voidTk)
     {
         tk = scan(fp);
         n->leftSub = vars();
         n->rightSub = block();
+        if(error)
+        {
+            freeTree(n);
+            fclose(fp);
+            printf(errorMsg);
+            printf("\n");
+            exit(1);
+        }
         return n;
     }
     else
     {
         printf("Error: expected \"void\", got %s\n", tokenArr[tk.tokenID]);
+        freeTree(n);
         fclose(fp);
         exit(1);
     }
@@ -600,6 +754,7 @@ parseNode * parser(FILE * fptr)
     else
     {
         printf("ERROR, program continues after final \"end\"\n");
+        freeTree(n);
         fclose(fp);
         exit(1);
     }

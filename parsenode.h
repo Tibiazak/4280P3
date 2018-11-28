@@ -7,13 +7,13 @@
 
 typedef struct parseNode
 {
+    struct parseNode * leftSub;
+    struct parseNode * midSub;
+    struct parseNode * rightSub;
     char * nonTerm;
     char ident[8];
     char op[3];
     char integr[8];
-    struct parseNode * leftSub;
-    struct parseNode * midSub;
-    struct parseNode * rightSub;
 } parseNode;
 
 #endif //PARSENODE_H

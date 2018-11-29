@@ -34,6 +34,9 @@ parseNode * init_node()
     newNode->leftSub = NULL;
     newNode->rightSub = NULL;
     newNode->midSub = NULL;
+    newNode->integr = "";
+    newNode->op = "";
+    newNode->ident = "";
     return newNode;
 }
 
@@ -56,6 +59,58 @@ void freeTree(parseNode * treePtr)
     free(treePtr->rightSub);
     free(treePtr->midSub);
     return;
+}
+
+
+void printNode(parseNode * treePtr, int level, FILE * fp)
+{
+    fprintf(fp, "%*c%s ", level*2, ' ', treePtr->nonTerm);
+    if(treePtr->ident != "")
+    {
+        fprintf(fp, "ID: %s ", treePtr->ident);
+    }
+    if(treePtr->op != "")
+    {
+        fprintf(fp, "Operator: %s ", treePtr->op);
+    }
+    if(treePtr->integr != "")
+    {
+        fprintf(fp, "Integer: %s", treePtr->integr);
+    }
+    fprintf(fp, "\n");
+}
+
+
+// This is the recursive helper function for inOrder traversal
+// It calls itself and printNode as appropriate
+void inOrderRecursive(parseNode * treePtr, int level, FILE * outfile)
+{
+    if(treePtr->leftSub)
+    {
+        inOrderRecursive(treePtr->leftSub, (level+1), outfile);
+    }
+    if(treePtr->midSub)
+    {
+        inOrderRecursive(treePtr->midSub, (level+1), outfile);
+    }
+    printNode(treePtr, level, outfile);
+    if(treePtr->rightSub)
+    {
+        inOrderRecursive(treePtr->rightSub, (level+1), outfile);
+    }
+}
+
+//This is the global inOrder function, it opens the output file and calls inOrderRecursive
+void inOrderTraversal(parseNode * treePtr)
+{
+    FILE * outfile = fopen("output.fs18", "w");
+    if(!outfile)
+    {
+        printf("ERROR opening inorder file!\n");
+        exit(1);
+    }
+    inOrderRecursive(treePtr, 0, outfile);
+    fclose(outfile);
 }
 
 

@@ -34,9 +34,9 @@ parseNode * init_node()
     newNode->leftSub = NULL;
     newNode->rightSub = NULL;
     newNode->midSub = NULL;
-    newNode->integr = "";
-    newNode->op = "";
-    newNode->ident = "";
+    strcpy(newNode->integr, "");
+    strcpy(newNode->ident, "");
+    strcpy(newNode->op, "");
     return newNode;
 }
 
@@ -65,15 +65,15 @@ void freeTree(parseNode * treePtr)
 void printNode(parseNode * treePtr, int level, FILE * fp)
 {
     fprintf(fp, "%*c%s ", level*2, ' ', treePtr->nonTerm);
-    if(treePtr->ident != "")
+    if(strcmp(treePtr->ident, ""))
     {
         fprintf(fp, "ID: %s ", treePtr->ident);
     }
-    if(treePtr->op != "")
+    if(strcmp(treePtr->op, ""))
     {
         fprintf(fp, "Operator: %s ", treePtr->op);
     }
-    if(treePtr->integr != "")
+    if(strcmp(treePtr->integr, ""))
     {
         fprintf(fp, "Integer: %s", treePtr->integr);
     }

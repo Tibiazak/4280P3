@@ -89,11 +89,11 @@ void inOrderRecursive(parseNode * treePtr, int level, FILE * outfile)
     {
         inOrderRecursive(treePtr->leftSub, (level+1), outfile);
     }
+    printNode(treePtr, level, outfile);
     if(treePtr->midSub)
     {
         inOrderRecursive(treePtr->midSub, (level+1), outfile);
     }
-    printNode(treePtr, level, outfile);
     if(treePtr->rightSub)
     {
         inOrderRecursive(treePtr->rightSub, (level+1), outfile);

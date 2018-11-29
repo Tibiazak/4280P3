@@ -62,22 +62,22 @@ void freeTree(parseNode * treePtr)
 }
 
 
-void printNode(parseNode * treePtr, int level, FILE * fp)
+void printNode(parseNode * treePtr, int level, FILE * outfile)
 {
-    fprintf(fp, "%*c%s ", level*2, ' ', treePtr->nonTerm);
+    fprintf(outfile, "%*c%s ", level*2, ' ', treePtr->nonTerm);
     if(strcmp(treePtr->ident, ""))
     {
-        fprintf(fp, "ID: %s ", treePtr->ident);
+        fprintf(outfile, "ID: %s ", treePtr->ident);
     }
     if(strcmp(treePtr->op, ""))
     {
-        fprintf(fp, "Operator: %s ", treePtr->op);
+        fprintf(outfile, "Operator: %s ", treePtr->op);
     }
     if(strcmp(treePtr->integr, ""))
     {
-        fprintf(fp, "Integer: %s", treePtr->integr);
+        fprintf(outfile, "Integer: %s", treePtr->integr);
     }
-    fprintf(fp, "\n");
+    fprintf(outfile, "\n");
 }
 
 

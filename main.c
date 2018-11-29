@@ -76,6 +76,7 @@ int main(int argc, char * argv[])
 //    }
 
     parseNode * tree = parser(fp);
+    inOrderTraversal(tree);
     freeTree(tree);
 
     // Close the file unless the file is stdin

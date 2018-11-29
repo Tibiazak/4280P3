@@ -11,5 +11,6 @@
 
 void freeTree(parseNode *);
 parseNode * parser(FILE *);
+void inOrderTraversal(parseNode *);
 
 #endif //PARSER_H

@@ -59,7 +59,6 @@ void staticSemanticsHelper(parseNode * treePtr)
     int i;
     if(!strcmp(treePtr->nonTerm, "vars"))
     {
-        printf("Entered vars section for nonterm %s\n", treePtr->nonTerm);
         for(i = 0; i < total; i++)
         {
             if(!strcmp(varArr[i], treePtr->ident))
@@ -67,7 +66,6 @@ void staticSemanticsHelper(parseNode * treePtr)
                 if(strcmp(varArr[i], ""))
                 {
                     printf("Error: Duplicate declaration of variable %s\n", treePtr->ident);
-                    printf("Variable encountered: %s Variable found in array: %s\n", treePtr->ident, varArr[i]);
                     freeTree(treeBase);
                     exit(1);
                 }
@@ -78,13 +76,10 @@ void staticSemanticsHelper(parseNode * treePtr)
     }
     else if(strcmp(treePtr->ident, ""))
     {
-        printf("Looking for variable %s\n", treePtr->ident);
         for(i = 0; i < total; i++)
         {
-            printf("Current variable: %s\n", varArr[i]);
             if(!strcmp(treePtr->ident, varArr[i]))
             {
-                printf("Looking for variable %s, found variable %s\n", treePtr->ident, varArr[i]);
                 i = (MAXVARNUM * 2);
             }
         }

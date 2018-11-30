@@ -1,11 +1,13 @@
 //
 // Joshua Bearden
 // CS4280
-// P2 Parser
+// P3 Parser
 // This file takes in the next token (from the scanner) and
 // determines if the tokens are coming in a valid order.
-// To-do: Generate parse tree
-//
+// It then builds a parse tree and contains functions for
+// traversing the tree.
+// It also contains a static semantics function to ensure
+// variables are declared correctly in global scope.
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -33,6 +35,7 @@ char varArr[MAXVARNUM][MAXSTRINGLENGTH];
 int total;
 
 
+// Function to free malloc'd memory
 void freeTree(parseNode * treePtr)
 {
     if(treePtr->leftSub)
@@ -54,14 +57,15 @@ void freeTree(parseNode * treePtr)
 }
 
 
+// Recursive static semantics function
 void staticSemanticsHelper(parseNode * treePtr)
 {
     int i;
-    if(!strcmp(treePtr->nonTerm, "vars"))
+    if(!strcmp(treePtr->nonTerm, "vars")) // if in a var declaration node
     {
         for(i = 0; i < total; i++)
         {
-            if(!strcmp(varArr[i], treePtr->ident))
+            if(!strcmp(varArr[i], treePtr->ident)) // see if var has been declared already
             {
                 if(strcmp(varArr[i], ""))
                 {
@@ -71,26 +75,26 @@ void staticSemanticsHelper(parseNode * treePtr)
                 }
             }
         }
-        strcpy(varArr[total], treePtr->ident);
+        strcpy(varArr[total], treePtr->ident); //no declaration, add to var array
         total = total+1;
     }
-    else if(strcmp(treePtr->ident, ""))
+    else if(strcmp(treePtr->ident, "")) // not in var declaration node but the node has an identifier
     {
         for(i = 0; i < total; i++)
         {
-            if(!strcmp(treePtr->ident, varArr[i]))
+            if(!strcmp(treePtr->ident, varArr[i])) // check if the var has been declared, set a sentinel value
             {
                 i = (MAXVARNUM * 2);
             }
         }
-        if(i < (MAXVARNUM * 2))
+        if(i < (MAXVARNUM * 2)) // if no variable was found
         {
             printf("Error: variable %s used before declaration!\n", treePtr->ident);
             freeTree(treeBase);
             exit(1);
         }
     }
-    if(treePtr->leftSub)
+    if(treePtr->leftSub) // if we haven't already found an error, check all the children recursively
     {
         staticSemanticsHelper(treePtr->leftSub);
     }
@@ -106,6 +110,8 @@ void staticSemanticsHelper(parseNode * treePtr)
 }
 
 
+// publicly accessible setup function for the static semantics - sets a master pointer to free memory,
+// initializes the global total, and prints to the screen if the semantics are correct.
 void staticSemantics(parseNode * treePtr)
 {
     total = 0;
@@ -115,6 +121,7 @@ void staticSemantics(parseNode * treePtr)
 }
 
 
+// Initializes a node and malloc's memory
 parseNode * init_node()
 {
     parseNode * newNode = (parseNode *)malloc(sizeof(parseNode));
@@ -128,6 +135,7 @@ parseNode * init_node()
 }
 
 
+// prints out a node and all relevant info
 void printNode(parseNode * treePtr, int level, FILE * outfile)
 {
     fprintf(outfile, "%*c%s ", level*2, ' ', treePtr->nonTerm);
@@ -149,6 +157,7 @@ void printNode(parseNode * treePtr, int level, FILE * outfile)
 
 // This is the recursive helper function for inOrder traversal
 // It calls itself and printNode as appropriate
+// (Actually a form of preorder, just didn't change name)
 void inOrderRecursive(parseNode * treePtr, int level, FILE * outfile)
 {
     printNode(treePtr, level, outfile);
@@ -167,6 +176,7 @@ void inOrderRecursive(parseNode * treePtr, int level, FILE * outfile)
 }
 
 //This is the global inOrder function, it opens the output file and calls inOrderRecursive
+// (Actually a form of preorder, just didn't change name)
 void inOrderTraversal(parseNode * treePtr)
 {
     FILE * outfile = fopen("output.fs18", "w");

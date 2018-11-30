@@ -1,8 +1,10 @@
 // Joshua Bearden
-// CS4280 Project 2
+// CS4280 Project 3
 // Main just determines where the input is coming from,
 // validates the filename, opens the file,
 // and then calls the parser, which calls the scanner.
+// It then calls the function to traverse the parse tree
+// and the static semantics function.
 
 
 #include <stdio.h>

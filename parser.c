@@ -36,7 +36,7 @@ char varArr[MAXVARNUM][MAXSTRINGLENGTH];
 bool staticSemantics(parseNode * treePtr, int total)
 {
     int i;
-    if(treePtr->nonTerm == "vars")
+    if(!strcmp(treePtr->nonTerm, "vars"))
     {
         for(i = 0; i < total; i++)
         {

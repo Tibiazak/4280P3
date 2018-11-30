@@ -29,7 +29,7 @@ FILE * fp;
 parseNode * treeBase;
 char errorMsg[100];
 bool error = false;
-char vars[MAXVARNUM][MAXSTRINGLENGTH];
+char varArr[MAXVARNUM][MAXSTRINGLENGTH];
 
 
 
@@ -40,19 +40,19 @@ bool staticSemantics(parseNode * treePtr, int total)
     {
         for(i = 0; i < total; i++)
         {
-            if(!strcmp(vars[i], treePtr->ident))
+            if(!strcmp(varArr[i], treePtr->ident))
             {
                 return false;
             }
         }
-        strcpy(vars[total], treePtr->ident);
+        strcpy(varArr[total], treePtr->ident);
         total++;
     }
     else if(strcmp(treePtr->ident, ""))
     {
         for(i = 0; i < total; i++)
         {
-            if(!strcmp(treePtr->ident, vars[i]))
+            if(!strcmp(treePtr->ident, varArr[i]))
             {
                 i = (MAXVARNUM * 2);
             }

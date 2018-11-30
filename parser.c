@@ -53,7 +53,7 @@ void freeTree(parseNode * treePtr)
 }
 
 
-void staticSemantics(parseNode * treePtr, int total)
+void staticSemanticsHelper(parseNode * treePtr, int total)
 {
     int i;
     if(!strcmp(treePtr->nonTerm, "vars"))
@@ -99,6 +99,13 @@ void staticSemantics(parseNode * treePtr, int total)
         staticSemantics(treePtr->midSub, total);
     }
     return;
+}
+
+
+void staticSemantics(parseNode * treePtr)
+{
+    treeBase = treePtr;
+    staticSemanticsHelper(treePtr, 0);
 }
 
 

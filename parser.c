@@ -88,15 +88,15 @@ void staticSemantics(parseNode * treePtr, int total)
     }
     if(treePtr->leftSub)
     {
-        staticSemantics(treePtr->leftSub, total)
+        staticSemantics(treePtr->leftSub, total);
     }
     if(treePtr->rightSub)
     {
-        staticSemantics(treePtr->rightSub, total)
+        staticSemantics(treePtr->rightSub, total);
     }
     if(treePtr->midSub)
     {
-        staticSemantics(treePtr->midSub, total)
+        staticSemantics(treePtr->midSub, total);
     }
     return;
 }

@@ -76,6 +76,7 @@ void staticSemanticsHelper(parseNode * treePtr, int total)
         {
             if(!strcmp(treePtr->ident, varArr[i]))
             {
+                printf("Looking for variable %s, found variable %s\n", treePtr->ident, varArr[i]);
                 i = (MAXVARNUM * 2);
             }
         }

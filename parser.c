@@ -72,8 +72,10 @@ void staticSemanticsHelper(parseNode * treePtr, int total)
     }
     else if(strcmp(treePtr->ident, ""))
     {
+        printf("Looking for variable %s\n", treePtr->ident);
         for(i = 0; i < total; i++)
         {
+            printf("Current variable: %s\n", varArr[i]);
             if(!strcmp(treePtr->ident, varArr[i]))
             {
                 printf("Looking for variable %s, found variable %s\n", treePtr->ident, varArr[i]);

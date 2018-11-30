@@ -59,6 +59,7 @@ void staticSemanticsHelper(parseNode * treePtr)
     int i;
     if(!strcmp(treePtr->nonTerm, "vars"))
     {
+        printf("Entered vars section for nonterm %s\n", treePtr->nonTerm);
         for(i = 0; i < total; i++)
         {
             if(!strcmp(varArr[i], treePtr->ident))

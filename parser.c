@@ -32,74 +32,6 @@ bool error = false;
 char varArr[MAXVARNUM][MAXSTRINGLENGTH];
 
 
-
-bool staticSemantics(parseNode * treePtr, int total)
-{
-    int i;
-    if(!strcmp(treePtr->nonTerm, "vars"))
-    {
-        for(i = 0; i < total; i++)
-        {
-            if(!strcmp(varArr[i], treePtr->ident))
-            {
-                return false;
-            }
-        }
-        strcpy(varArr[total], treePtr->ident);
-        total++;
-    }
-    else if(strcmp(treePtr->ident, ""))
-    {
-        for(i = 0; i < total; i++)
-        {
-            if(!strcmp(treePtr->ident, varArr[i]))
-            {
-                i = (MAXVARNUM * 2);
-            }
-        }
-        if(i < (MAXVARNUM * 2))
-        {
-            return false;
-        }
-    }
-    if(treePtr->leftSub)
-    {
-        if(!staticSemantics(treePtr->leftSub, total))
-        {
-            return false;
-        }
-    }
-    if(treePtr->rightSub)
-    {
-        if(!staticSemantics(treePtr->rightSub, total))
-        {
-            return false;
-        }
-    }
-    if(treePtr->midSub)
-    {
-        if(!staticSemantics(treePtr->midSub, total))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-
-parseNode * init_node()
-{
-    parseNode * newNode = (parseNode *)malloc(sizeof(parseNode));
-    newNode->leftSub = NULL;
-    newNode->rightSub = NULL;
-    newNode->midSub = NULL;
-    strcpy(newNode->integr, "");
-    strcpy(newNode->ident, "");
-    strcpy(newNode->op, "");
-    return newNode;
-}
-
-
 void freeTree(parseNode * treePtr)
 {
     if(treePtr->leftSub)
@@ -118,6 +50,68 @@ void freeTree(parseNode * treePtr)
     free(treePtr->rightSub);
     free(treePtr->midSub);
     return;
+}
+
+
+void staticSemantics(parseNode * treePtr, int total)
+{
+    int i;
+    if(!strcmp(treePtr->nonTerm, "vars"))
+    {
+        for(i = 0; i < total; i++)
+        {
+            if(!strcmp(varArr[i], treePtr->ident))
+            {
+                printf("Error: Duplicate declaration of variable %s\n", treePtr->ident);
+                freeTree(treeBase);
+                exit(1);
+            }
+        }
+        strcpy(varArr[total], treePtr->ident);
+        total++;
+    }
+    else if(strcmp(treePtr->ident, ""))
+    {
+        for(i = 0; i < total; i++)
+        {
+            if(!strcmp(treePtr->ident, varArr[i]))
+            {
+                i = (MAXVARNUM * 2);
+            }
+        }
+        if(i < (MAXVARNUM * 2))
+        {
+            printf("Error: variable %s used before declaration!\n", treePtr->ident);
+            freeTree(treeBase);
+            exit(1);
+        }
+    }
+    if(treePtr->leftSub)
+    {
+        staticSemantics(treePtr->leftSub, total)
+    }
+    if(treePtr->rightSub)
+    {
+        staticSemantics(treePtr->rightSub, total)
+    }
+    if(treePtr->midSub)
+    {
+        staticSemantics(treePtr->midSub, total)
+    }
+    return;
+}
+
+
+parseNode * init_node()
+{
+    parseNode * newNode = (parseNode *)malloc(sizeof(parseNode));
+    newNode->leftSub = NULL;
+    newNode->rightSub = NULL;
+    newNode->midSub = NULL;
+    strcpy(newNode->integr, "");
+    strcpy(newNode->ident, "");
+    strcpy(newNode->op, "");
+    return newNode;
 }
 
 

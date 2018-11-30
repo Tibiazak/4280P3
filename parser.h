@@ -12,5 +12,6 @@
 void freeTree(parseNode *);
 parseNode * parser(FILE *);
 void inOrderTraversal(parseNode *);
+bool staticSemantics(parseNode * , int );
 
 #endif //PARSER_H

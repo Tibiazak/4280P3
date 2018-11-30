@@ -26,6 +26,64 @@ FILE * fp;
 parseNode * treeBase;
 char errorMsg[100];
 bool error = false;
+int maxVarNum = 20;
+int maxStringLength = 8;
+char vars[maxVarNum][maxStringLength];
+
+
+
+bool staticSemantics(parseNode * treePtr, int total)
+{
+    int i;
+    if(treePtr->nonTerm == "vars")
+    {
+        for(i = 0; i < total; i++)
+        {
+            if(!strcmp(vars[i], treePtr->ident))
+            {
+                return false;
+            }
+        }
+        strcpy(vars[total], treePtr->ident);
+        total++;
+    }
+    else if(strcmp(treePtr->ident, ""))
+    {
+        for(i = 0; i < total; i++)
+        {
+            if(!strcmp(treePtr->ident, vars[i]))
+            {
+                i = (maxVarNum * 2);
+            }
+        }
+        if(i < (maxVarNum * 2))
+        {
+            return false;
+        }
+    }
+    if(treePtr->leftSub)
+    {
+        if(!staticSemantics(treePtr->leftSub, total))
+        {
+            return false;
+        }
+    }
+    if(treePtr->rightSub)
+    {
+        if(!staticSemantics(treePtr->rightSub, total))
+        {
+            return false;
+        }
+    }
+    if(treePtr->midSub)
+    {
+        if(!staticSemantics(treePtr->midSub, total))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 
 parseNode * init_node()

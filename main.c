@@ -77,6 +77,14 @@ int main(int argc, char * argv[])
 
     parseNode * tree = parser(fp);
     inOrderTraversal(tree);
+    if(staticSemantics(tree, 0))
+    {
+        printf("Valid variables\n");
+    }
+    else
+    {
+        printf("Invalid variables\n");
+    }
     freeTree(tree);
 
     // Close the file unless the file is stdin

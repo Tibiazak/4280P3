@@ -8,6 +8,7 @@
 #define PARSER_H
 
 #include "parsenode.h"
+#include <stdbool.h>
 
 void freeTree(parseNode *);
 parseNode * parser(FILE *);

@@ -111,6 +111,7 @@ void staticSemantics(parseNode * treePtr)
     total = 0;
     treeBase = treePtr;
     staticSemanticsHelper(treePtr);
+    printf("Variables are correct.\n");
 }
 
 

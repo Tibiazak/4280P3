@@ -64,10 +64,13 @@ void staticSemanticsHelper(parseNode * treePtr)
         {
             if(!strcmp(varArr[i], treePtr->ident))
             {
-                printf("Error: Duplicate declaration of variable %s\n", treePtr->ident);
-                printf("Variable encountered: %s Variable found in array: %s\n", treePtr->ident, varArr[i]);
-                freeTree(treeBase);
-                exit(1);
+                if(strcmp(varArr[i], ""))
+                {
+                    printf("Error: Duplicate declaration of variable %s\n", treePtr->ident);
+                    printf("Variable encountered: %s Variable found in array: %s\n", treePtr->ident, varArr[i]);
+                    freeTree(treeBase);
+                    exit(1);
+                }
             }
         }
         strcpy(varArr[total], treePtr->ident);

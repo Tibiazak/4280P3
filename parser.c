@@ -30,6 +30,7 @@ parseNode * treeBase;
 char errorMsg[100];
 bool error = false;
 char varArr[MAXVARNUM][MAXSTRINGLENGTH];
+int total;
 
 
 void freeTree(parseNode * treePtr)
@@ -53,7 +54,7 @@ void freeTree(parseNode * treePtr)
 }
 
 
-void staticSemanticsHelper(parseNode * treePtr, int total)
+void staticSemanticsHelper(parseNode * treePtr)
 {
     int i;
     if(!strcmp(treePtr->nonTerm, "vars"))
@@ -68,7 +69,7 @@ void staticSemanticsHelper(parseNode * treePtr, int total)
             }
         }
         strcpy(varArr[total], treePtr->ident);
-        total++;
+        total = total+1;
     }
     else if(strcmp(treePtr->ident, ""))
     {
@@ -91,15 +92,15 @@ void staticSemanticsHelper(parseNode * treePtr, int total)
     }
     if(treePtr->leftSub)
     {
-        staticSemanticsHelper(treePtr->leftSub, total);
+        staticSemanticsHelper(treePtr->leftSub);
     }
     if(treePtr->midSub)
     {
-        staticSemanticsHelper(treePtr->midSub, total);
+        staticSemanticsHelper(treePtr->midSub);
     }
     if(treePtr->rightSub)
     {
-        staticSemanticsHelper(treePtr->rightSub, total);
+        staticSemanticsHelper(treePtr->rightSub);
     }
     return;
 }
@@ -107,8 +108,9 @@ void staticSemanticsHelper(parseNode * treePtr, int total)
 
 void staticSemantics(parseNode * treePtr)
 {
+    total = 0;
     treeBase = treePtr;
-    staticSemanticsHelper(treePtr, 0);
+    staticSemanticsHelper(treePtr);
 }
 
 

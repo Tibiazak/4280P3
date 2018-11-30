@@ -15,6 +15,9 @@
 #include "scanner.h"
 #include "parsenode.h"
 
+#define MAXVARNUM 20
+#define MAXSTRINGLENGTH 8
+
 // Declaring some functions at the top
 parseNode * expr();
 parseNode * stat();
@@ -26,9 +29,7 @@ FILE * fp;
 parseNode * treeBase;
 char errorMsg[100];
 bool error = false;
-int maxVarNum = 20;
-int maxStringLength = 8;
-char vars[maxVarNum][maxStringLength];
+char vars[MAXVARNUM][MAXSTRINGLENGTH];
 
 
 
@@ -53,10 +54,10 @@ bool staticSemantics(parseNode * treePtr, int total)
         {
             if(!strcmp(treePtr->ident, vars[i]))
             {
-                i = (maxVarNum * 2);
+                i = (MAXVARNUM * 2);
             }
         }
-        if(i < (maxVarNum * 2))
+        if(i < (MAXVARNUM * 2))
         {
             return false;
         }

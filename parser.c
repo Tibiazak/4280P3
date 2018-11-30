@@ -90,13 +90,13 @@ void staticSemanticsHelper(parseNode * treePtr, int total)
     {
         staticSemanticsHelper(treePtr->leftSub, total);
     }
-    if(treePtr->rightSub)
-    {
-        staticSemanticsHelper(treePtr->rightSub, total);
-    }
     if(treePtr->midSub)
     {
         staticSemanticsHelper(treePtr->midSub, total);
+    }
+    if(treePtr->rightSub)
+    {
+        staticSemanticsHelper(treePtr->rightSub, total);
     }
     return;
 }

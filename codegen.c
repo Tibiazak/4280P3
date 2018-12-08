@@ -8,8 +8,8 @@
 #define MAXSTRINGLENGTH 8
 
 
-static LabelCntr = 0;
-static VarCntr = 0;
+static int LabelCntr = 0;
+static int VarCntr = 0;
 typedef enum {VAR, LABEL} nameType;
 static char Name[20];
 char varArr[MAXVARNUM][MAXSTRINGLENGTH];

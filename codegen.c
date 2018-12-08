@@ -87,6 +87,14 @@ void genCode(parseNode * tree)
         {
             genCode(tree->rightSub); // RHS of expr (<expr>)
             strcpy(tempName, newName(VAR));
+            if(varNum > MAXVARNUM)
+            {
+                printf("ERROR too many variables\n");
+                exit(1);
+            }
+            strcpy(varArr[varNum], tempName);
+            varVal[varNum] = 0;
+            varNum = varNum + 1;
             printf("STORE %s\n", tempName);
             genCode(tree->leftSub); // LHS of expr (<A>)
             if (!strcmp(tree->op, "*")) {
@@ -108,6 +116,14 @@ void genCode(parseNode * tree)
         {
             genCode(tree->rightSub); // RHS of A (<A>)
             strcpy(tempName, newName(VAR));
+            if(varNum > MAXVARNUM)
+            {
+                printf("ERROR too many variables\n");
+                exit(1);
+            }
+            strcpy(varArr[varNum], tempName);
+            varVal[varNum] = 0;
+            varNum = varNum + 1;
             printf("STORE %s\n", tempName);
             genCode(tree->leftSub); // LHS of expr <M>
             if(!strcmp(tree->op, "+"))
@@ -194,6 +210,14 @@ void genCode(parseNode * tree)
     {
         genCode(tree->midSub); // expr
         strcpy(tempName, newName(VAR));
+        if(varNum > MAXVARNUM)
+        {
+            printf("ERROR too many variables\n");
+            exit(1);
+        }
+        strcpy(varArr[varNum], tempName);
+        varVal[varNum] = 0;
+        varNum = varNum + 1;
         printf("STORE %s\n", tempName);
         printf("WRITE %s\n", tempName);
         return;
@@ -202,6 +226,14 @@ void genCode(parseNode * tree)
     {
         genCode(tree->midSub); // second <expr> of (<expr> <RO> <expr>)
         strcpy(tempName, newName(VAR));
+        if(varNum > MAXVARNUM)
+        {
+            printf("ERROR too many variables\n");
+            exit(1);
+        }
+        strcpy(varArr[varNum], tempName);
+        varVal[varNum] = 0;
+        varNum = varNum + 1;
         printf("STORE %s\n", tempName);
         genCode(tree->leftSub); // first <expr> of (<expr> <RO> <expr>)
         printf("SUB %s\n", tempName);
@@ -235,6 +267,14 @@ void genCode(parseNode * tree)
     {
         strcpy(label1, newName(LABEL));
         strcpy(tempName, newName(VAR));
+        if(varNum > MAXVARNUM)
+        {
+           printf("ERROR too many variables\n");
+           exit(1);
+        }
+        strcpy(varArr[varNum], tempName);
+        varVal[varNum] = 0;
+        varNum = varNum + 1;
         strcpy(label2, newName(LABEL));
         printf("%s: NOOP\n", label1);
         genCode(tree->midSub);

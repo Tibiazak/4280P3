@@ -2,6 +2,8 @@
 // Created by fof_z on 12/7/2018.
 //
 
+#include <stdio.h>
+#include <string.h>
 #include "parsenode.h"
 
 #define MAXVARNUM 20

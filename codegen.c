@@ -51,7 +51,7 @@ void genCode(parseNode * tree)
         printVars();
         return;
     }
-    else if(!strcmp(tree->nonTerm, "block""))
+    else if(!strcmp(tree->nonTerm, "block"))
     {
         genCode(tree->leftSub); // vars
         genCode(tree->rightSub); // stats

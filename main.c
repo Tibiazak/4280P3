@@ -15,6 +15,7 @@
 #include "parser.h"
 #include "parsenode.h"
 #include <stdbool.h>
+#include "codegen.h"
 
 int main(int argc, char * argv[])
 {
@@ -80,6 +81,7 @@ int main(int argc, char * argv[])
     parseNode * tree = parser(fp);
     inOrderTraversal(tree);
     staticSemantics(tree);
+    genCode(tree);
     freeTree(tree);
 
     // Close the file unless the file is stdin

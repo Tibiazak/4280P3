@@ -4,7 +4,7 @@
 
 #include "parsenode.h"
 
-#define MAXVARNUM 20;
+#define MAXVARNUM 20
 #define MAXSTRINGLENGTH 8
 
 

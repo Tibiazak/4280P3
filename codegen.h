@@ -1,6 +1,10 @@
-//
-// Created by fof_z on 12/8/2018.
-//
+/*
+ * Joshua Bearden
+ * CS4280
+ * P4 Code Generation
+ *
+ * Header for codegen.c, just makes setupGenCode() a publicly accessible function
+ */
 
 #ifndef CODEGEN_H
 #define CODEGEN_H

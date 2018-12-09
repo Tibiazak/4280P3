@@ -1,6 +1,10 @@
-//
-// Created by fof_z on 12/7/2018.
-//
+/*
+ * Joshua Bearden
+ * CS4280
+ * P4 Code Generation
+ *
+ * This file contains the functions to generate VirtMach code
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -21,6 +25,9 @@ int varNum;
 FILE * fp;
 
 
+// This function is borrowed from Dr. Janikow's "GenerateSee" file
+// found on Delmar, /accounts/classes/janikowc/cs4280/compiler
+// It generates a new name for temp variables and temp labels
 static char *newName(nameType what)
 { if (what==VAR)
         sprintf(Name,"V%d",VarCntr++);    /* generate a new label as V0, V1, etc */
@@ -29,6 +36,8 @@ static char *newName(nameType what)
     return(Name);
 }
 
+
+// This functions prints all the variables for storage allocation
 void printVars()
 {
     int i;
@@ -39,6 +48,8 @@ void printVars()
     return;
 }
 
+// This function is the recursive code generation function
+// It traverses through the parse tree, calling itself on each node
 void genCode(parseNode * tree)
 {
     char label1[20];
@@ -59,6 +70,12 @@ void genCode(parseNode * tree)
         genCode(tree->rightSub); // stats
         return;
     }
+    /*
+     * The vars production is the only one that is less straightforward.
+     * It has to add the variable name to the array of variables, and its
+     * initial value to the array of values, and increment the var counter.
+     * This allows for printing of all the variables at the end of execution
+     */
     else if(!strcmp(tree->nonTerm, "vars"))
     {
         if(!strcmp(tree->ident, ""))
@@ -324,6 +341,9 @@ void genCode(parseNode * tree)
     }
 }
 
+
+// The public setup function, initializes the global file pointer variable and calls
+// the genCode function
 void setupGenCode(parseNode * tree, FILE * outfile)
 {
     fp = outfile;

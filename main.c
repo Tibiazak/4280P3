@@ -1,10 +1,13 @@
 // Joshua Bearden
-// CS4280 Project 3
+// CS4280 Project 4
 // Main just determines where the input is coming from,
 // validates the filename, opens the file,
 // and then calls the parser, which calls the scanner.
 // It then calls the function to traverse the parse tree
 // and the static semantics function.
+// Then it opens the output file with the appropriate name,
+// and calls the setupGenCode function for code generation.
+// Finally it closes the files and exits.
 
 
 #include <stdio.h>

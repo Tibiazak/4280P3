@@ -255,10 +255,14 @@ void genCode(parseNode * tree)
         {
             fprintf(fp, "BRPOS %s\n", label1);
         }
-        else
+        else if(!strcmp(tree->op, "="))
         {
             fprintf(fp, "BRPOS %s\n", label1);
             fprintf(fp, "BRNEG %s\n", label1);
+        }
+        else if(!strcmp(Tree->op, "= ="))
+        {
+            fprintf(fp, "BRZERO %s\n", label1);
         }
         genCode(tree->rightSub); // code to execute if (<expr> <RO> <expr>) is true
         fprintf(fp, "%s: NOOP\n", label1);
@@ -298,10 +302,14 @@ void genCode(parseNode * tree)
         {
             fprintf(fp, "BRPOS %s\n", label2);
         }
-        else
+        else if(!strcmp(tree->op, "=")) // if equal
         {
             fprintf(fp, "BRPOS %s\n", label2);
             fprintf(fp, "BRNEG %s\n", label2);
+        }
+        else if(!strcmp(tree->op, "= =")) // if not equal
+        {
+            fprintf(fp, "BRZERO %s\n", label2);
         }
         genCode(tree->rightSub);
         fprintf(fp, "BR %s\n", label1);

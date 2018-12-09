@@ -20,15 +20,16 @@
 int main(int argc, char * argv[])
 {
     FILE * fp;
+    FILE * outfile;
     char file[30];
-//    char * filename;
+    char * filename;
 
     // Check command line arguments
     if (argc == 1)
     {
         printf("No file given, read from stdin.\n");
         fp = stdin;
-//        filename = "out";
+        filename = "out";
     }
     else if (argc == 2) // If there is a file listed
     {
@@ -36,7 +37,7 @@ int main(int argc, char * argv[])
         strcpy(file, argv[1]);
         strcat(file, ".fs18");
         fp = fopen(file, "r");
-//        filename = argv[1];
+        filename = argv[1];
     }
     else // too many arguments
     {
@@ -81,8 +82,14 @@ int main(int argc, char * argv[])
     parseNode * tree = parser(fp);
     inOrderTraversal(tree);
     staticSemantics(tree);
-    genCode(tree);
+
+    strcpy(file, filename);
+    strcat(file, ".asm");
+    outfile = fopen(file, "w");
+
+    setupGenCode(tree, outfile);
     freeTree(tree);
+    fclose(outfile);
 
     // Close the file unless the file is stdin
     if (fp != stdin)

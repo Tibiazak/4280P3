@@ -6,6 +6,5 @@
 #define CODEGEN_H
 
 #include "parsenode.h"
-void genCode(parseNode *);
-
+void setupGenCode(parseNode *, FILE *);
 #endif //CODEGEN_H

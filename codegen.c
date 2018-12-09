@@ -18,6 +18,7 @@ static char Name[20];
 char varArr[MAXVARNUM][MAXSTRINGLENGTH];
 int varVal[MAXVARNUM];
 int varNum;
+FILE * fp;
 
 
 static char *newName(nameType what)
@@ -33,7 +34,7 @@ void printVars()
     int i;
     for (i = 0; i < varNum; i++)
     {
-        printf("%s %i\n", varArr[i], varVal[i]);
+        fprintf(fp, "%s %i\n", varArr[i], varVal[i]);
     }
     return;
 }
@@ -48,7 +49,7 @@ void genCode(parseNode * tree)
     {
         genCode(tree->leftSub); //vars
         genCode(tree->rightSub); // block
-        printf("STOP\n");
+        fprintf(fp, "STOP\n");
         printVars();
         return;
     }
@@ -95,12 +96,12 @@ void genCode(parseNode * tree)
             strcpy(varArr[varNum], tempName);
             varVal[varNum] = 0;
             varNum = varNum + 1;
-            printf("STORE %s\n", tempName);
+            fprintf(fp, "STORE %s\n", tempName);
             genCode(tree->leftSub); // LHS of expr (<A>)
             if (!strcmp(tree->op, "*")) {
-                printf("MULT %s\n", tempName);
+                fprintf(fp, "MULT %s\n", tempName);
             } else {
-                printf("DIV %s\n", tempName);
+                fprintf(fp, "DIV %s\n", tempName);
             }
             return;
         }
@@ -124,15 +125,15 @@ void genCode(parseNode * tree)
             strcpy(varArr[varNum], tempName);
             varVal[varNum] = 0;
             varNum = varNum + 1;
-            printf("STORE %s\n", tempName);
+            fprintf(fp, "STORE %s\n", tempName);
             genCode(tree->leftSub); // LHS of expr <M>
             if(!strcmp(tree->op, "+"))
             {
-                printf("ADD %s\n", tempName);
+                fprintf(fp, "ADD %s\n", tempName);
             }
             else
             {
-                printf("SUB %s\n", tempName);
+                fprintf(fp, "SUB %s\n", tempName);
             }
             return;
         }
@@ -147,7 +148,7 @@ void genCode(parseNode * tree)
         if(!strcmp(tree->op, "-"))
         {
             genCode(tree->midSub);
-            printf("MULT -1\n");
+            fprintf(fp, "MULT -1\n");
             return;
         }
         else
@@ -167,12 +168,12 @@ void genCode(parseNode * tree)
         {
             if(strcmp(tree->ident, "")) // if identifier
             {
-                printf("LOAD %s\n", tree->ident);
+                fprintf(fp, "LOAD %s\n", tree->ident);
                 return;
             }
             else
             {
-                printf("LOAD %s\n", tree->integr);
+                fprintf(fp, "LOAD %s\n", tree->integr);
                 return;
             }
         }
@@ -203,7 +204,7 @@ void genCode(parseNode * tree)
     }
     else if(!strcmp(tree->nonTerm, "in"))
     {
-        printf("READ %s\n", tree->ident);
+        fprintf(fp, "READ %s\n", tree->ident);
         return;
     }
     else if(!strcmp(tree->nonTerm, "out"))
@@ -218,8 +219,8 @@ void genCode(parseNode * tree)
         strcpy(varArr[varNum], tempName);
         varVal[varNum] = 0;
         varNum = varNum + 1;
-        printf("STORE %s\n", tempName);
-        printf("WRITE %s\n", tempName);
+        fprintf(fp, "STORE %s\n", tempName);
+        fprintf(fp, "WRITE %s\n", tempName);
         return;
     }
     else if(!strcmp(tree->nonTerm, "if"))
@@ -234,33 +235,33 @@ void genCode(parseNode * tree)
         strcpy(varArr[varNum], tempName);
         varVal[varNum] = 0;
         varNum = varNum + 1;
-        printf("STORE %s\n", tempName);
+        fprintf(fp, "STORE %s\n", tempName);
         genCode(tree->leftSub); // first <expr> of (<expr> <RO> <expr>)
-        printf("SUB %s\n", tempName);
+        fprintf(fp, "SUB %s\n", tempName);
         strcpy(label1, newName(LABEL));
         if(!strcmp(tree->op, ">"))
         {
-            printf("BRZNEG %s\n", label1);
+            fprintf(fp, "BRZNEG %s\n", label1);
         }
         else if(!strcmp(tree->op, "<"))
         {
-            printf("BRZPOS %s\n", label1);
+            fprintf(fp, "BRZPOS %s\n", label1);
         }
         else if(!strcmp(tree->op, "> ="))
         {
-            printf("BRNEG %s\n", label1);
+            fprintf(fp, "BRNEG %s\n", label1);
         }
         else if(!strcmp(tree->op, "< ="))
         {
-            printf("BRPOS %s\n", label1);
+            fprintf(fp, "BRPOS %s\n", label1);
         }
         else
         {
-            printf("BRPOS %s\n", label1);
-            printf("BRNEG %s\n", label1);
+            fprintf(fp, "BRPOS %s\n", label1);
+            fprintf(fp, "BRNEG %s\n", label1);
         }
         genCode(tree->rightSub); // code to execute if (<expr> <RO> <expr>) is true
-        printf("%s: NOOP\n", label1);
+        fprintf(fp, "%s: NOOP\n", label1);
         return;
     }
     else if(!strcmp(tree->nonTerm, "loop"))
@@ -276,41 +277,48 @@ void genCode(parseNode * tree)
         varVal[varNum] = 0;
         varNum = varNum + 1;
         strcpy(label2, newName(LABEL));
-        printf("%s: NOOP\n", label1);
+        fprintf(fp, "%s: NOOP\n", label1);
         genCode(tree->midSub);
-        printf("STORE %s\n", tempName);
+        fprintf(fp, "STORE %s\n", tempName);
         genCode(tree->leftSub);
-        printf("SUB %s\n", tempName);
+        fprintf(fp, "SUB %s\n", tempName);
         if(!strcmp(tree->op, ">"))
         {
-            printf("BRZNEG %s\n", label2);
+            fprintf(fp, "BRZNEG %s\n", label2);
         }
         else if(!strcmp(tree->op, "<"))
         {
-            printf("BRZPOS %s\n", label2);
+            fprintf(fp, "BRZPOS %s\n", label2);
         }
         else if(!strcmp(tree->op, "> ="))
         {
-            printf("BRNEG %s\n", label2);
+            fprintf(fp, "BRNEG %s\n", label2);
         }
         else if(!strcmp(tree->op, "< ="))
         {
-            printf("BRPOS %s\n", label2);
+            fprintf(fp, "BRPOS %s\n", label2);
         }
         else
         {
-            printf("BRPOS %s\n", label2);
-            printf("BRNEG %s\n", label2);
+            fprintf(fp, "BRPOS %s\n", label2);
+            fprintf(fp, "BRNEG %s\n", label2);
         }
         genCode(tree->rightSub);
-        printf("BR %s\n", label1);
-        printf("%s: NOOP\n", label2);
+        fprintf(fp, "BR %s\n", label1);
+        fprintf(fp, "%s: NOOP\n", label2);
         return;
     }
     else if(!strcmp(tree->nonTerm, "assign"))
     {
         genCode(tree->midSub); // expr
-        printf("STORE %s\n", tree->ident);
+        fprintf(fp, "STORE %s\n", tree->ident);
         return;
     }
+}
+
+void setupGenCode(parseNode * tree, FILE * outfile)
+{
+    fp = outfile;
+    genCode(tree);
+    return;
 }

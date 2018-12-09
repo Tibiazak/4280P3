@@ -260,7 +260,7 @@ void genCode(parseNode * tree)
             fprintf(fp, "BRPOS %s\n", label1);
             fprintf(fp, "BRNEG %s\n", label1);
         }
-        else if(!strcmp(Tree->op, "= ="))
+        else if(!strcmp(tree->op, "= ="))
         {
             fprintf(fp, "BRZERO %s\n", label1);
         }
